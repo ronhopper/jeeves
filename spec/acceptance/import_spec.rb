@@ -41,5 +41,11 @@ describe "import" do
   it "imports a constant" do
     subject.my_constant.should == "MY VALUE"
   end
+
+  it "raises an error if no importers can find the dependency" do
+    expect { subject.class.import :unknown, from: JeevesTestApp::OtherScope }.
+      to raise_error(ArgumentError,
+           "Dependency 'unknown' was not found in JeevesTestApp::OtherScope")
+  end
 end
 
