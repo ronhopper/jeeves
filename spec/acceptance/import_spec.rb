@@ -18,9 +18,7 @@ module JeevesTestApp
   module InnerScope
     class TestSubject
       extend Jeeves
-      import :my_method, from: OtherScope
-      import :my_callable, from: OtherScope
-      import :my_constant, from: OtherScope
+      import :my_method, :my_callable, :my_constant, from: OtherScope
     end
   end
 end
