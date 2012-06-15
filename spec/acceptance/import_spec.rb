@@ -16,9 +16,14 @@ module JeevesTestApp
   end
 
   module InnerScope
+    def self.marco
+      :polo
+    end
+
     class TestSubject
       extend Jeeves
       import :my_method, :my_callable, :my_constant, from: OtherScope
+      import :marco
     end
   end
 end
@@ -38,6 +43,10 @@ describe "import" do
 
   it "imports a constant" do
     subject.my_constant.should == "MY VALUE"
+  end
+
+  it "defaults to the current class's scope" do
+    subject.marco.should == :polo
   end
 
   it "raises an error if no importers can find the dependency" do

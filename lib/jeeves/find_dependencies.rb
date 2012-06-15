@@ -1,9 +1,7 @@
 module Jeeves
   class FindDependencies
-    def self.call(*args)
-      options = args.pop
-      scope = options.fetch(:from)
-      args.inject({}) do |dependencies, name|
+    def self.call(scope, *names)
+      names.inject({}) do |dependencies, name|
         dependencies.update(name => delegator_for(name, scope))
       end
     end

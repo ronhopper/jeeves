@@ -18,7 +18,7 @@ module Jeeves
 
     it "maps dependency names to anonymous delegator functions" do
       ImportMethod.stub(:call).with(:my_dependency, scope) { delegator }
-      FindDependencies.call(:my_dependency, from: scope).should == {
+      FindDependencies.call(scope, :my_dependency).should == {
         my_dependency: delegator
       }
     end
@@ -27,7 +27,7 @@ module Jeeves
       delegator2 = stub("delegator 2")
       ImportMethod.stub(:call).with(:my_dep_1, scope) { delegator }
       ImportMethod.stub(:call).with(:my_dep_2, scope) { delegator2 }
-      FindDependencies.call(:my_dep_1, :my_dep_2, from: scope).should == {
+      FindDependencies.call(scope, :my_dep_1, :my_dep_2).should == {
         my_dep_1: delegator,
         my_dep_2: delegator2
       }
@@ -35,20 +35,20 @@ module Jeeves
 
     it "uses ImportCallable if ImportMethod fails" do
       ImportCallable.stub(:call).with(:my_dependency, scope) { delegator }
-      FindDependencies.call(:my_dependency, from: scope).should == {
+      FindDependencies.call(scope, :my_dependency).should == {
         my_dependency: delegator
       }
     end
 
     it "uses ImportConstant if ImportMethod and ImportCallable fail" do
       ImportConstant.stub(:call).with(:my_dependency, scope) { delegator }
-      FindDependencies.call(:my_dependency, from: scope).should == {
+      FindDependencies.call(scope, :my_dependency).should == {
         my_dependency: delegator
       }
     end
 
     it "raises an error if all importers fail" do
-      expect { FindDependencies.call(:my_dependency, from: scope) }.
+      expect { FindDependencies.call(scope, :my_dependency) }.
         to raise_error(ArgumentError,
           "Dependency 'my_dependency' was not found in ScopeStub")
     end
