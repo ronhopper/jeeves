@@ -1,6 +1,6 @@
 module Jeeves
-  class ImportCallable
-    def self.call(name, scope)
+  class ResolveCallable
+    def self.call(scope, name)
       class_name = camelize(name)
       if scope.const_defined?(class_name)
         scope.const_get(class_name).new

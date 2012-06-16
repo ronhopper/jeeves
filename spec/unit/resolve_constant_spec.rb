@@ -1,4 +1,4 @@
-require "jeeves/import_constant"
+require "jeeves/resolve_constant"
 
 module JeevesTestApp
   module ConstantTest
@@ -7,15 +7,15 @@ module JeevesTestApp
 end
 
 module Jeeves
-  describe ImportConstant do
+  describe ResolveConstant do
 
     it "returns an anonymous function which returns the constant" do
-      delegator = ImportConstant.call(:my_constant, JeevesTestApp::ConstantTest)
+      delegator = ResolveConstant.call(JeevesTestApp::ConstantTest, :my_constant)
       delegator.call.should == "MY VALUE"
     end
 
     it "returns nil if the constant is not defined" do
-      delegator = ImportConstant.call(:undefined_constant, JeevesTestApp::ConstantTest)
+      delegator = ResolveConstant.call(JeevesTestApp::ConstantTest, :undefined_constant)
       delegator.should be(nil)
     end
 

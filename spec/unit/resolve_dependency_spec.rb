@@ -1,8 +1,8 @@
 module Jeeves
-  class ImportMethod; end
-  class ImportCallable; end
-  class ImportConstant; end
-  class ImportMock; end
+  class ResolveMethod; end
+  class ResolveCallable; end
+  class ResolveConstant; end
+  class ResolveMock; end
 end
 require "jeeves/resolve_dependency"
 
@@ -12,33 +12,33 @@ module Jeeves
     let(:delegator) { stub("delegator") }
 
     before do
-      ImportMethod.stub(:call)
-      ImportCallable.stub(:call)
-      ImportConstant.stub(:call)
+      ResolveMethod.stub(:call)
+      ResolveCallable.stub(:call)
+      ResolveConstant.stub(:call)
     end
 
     it "maps dependency names to anonymous delegator functions" do
-      ImportMethod.stub(:call).with(:my_dependency, scope) { delegator }
+      ResolveMethod.stub(:call).with(scope, :my_dependency) { delegator }
       ResolveDependency.call(scope, :my_dependency).should be(delegator)
     end
 
-    it "uses ImportCallable if ImportMethod fails" do
-      ImportCallable.stub(:call).with(:my_dependency, scope) { delegator }
+    it "uses ResolveCallable if ResolveMethod fails" do
+      ResolveCallable.stub(:call).with(scope, :my_dependency) { delegator }
       ResolveDependency.call(scope, :my_dependency).should be(delegator)
     end
 
-    it "uses ImportConstant if ImportMethod and ImportCallable fail" do
-      ImportConstant.stub(:call).with(:my_dependency, scope) { delegator }
+    it "uses ResolveConstant if ResolveMethod and ResolveCallable fail" do
+      ResolveConstant.stub(:call).with(scope, :my_dependency) { delegator }
       ResolveDependency.call(scope, :my_dependency).should be(delegator)
     end
 
-    it "uses ImportMock as a last resort" do
-      ImportMock.stub(:call).with(:my_dependency, scope) { delegator }
+    it "uses ResolveMock as a last resort" do
+      ResolveMock.stub(:call).with(scope, :my_dependency) { delegator }
       ResolveDependency.call(scope, :my_dependency).should be(delegator)
     end
 
     it "raises an error if all importers fail" do
-      Jeeves::ImportMock.stub(:call) # to avoid RSpec integration
+      Jeeves::ResolveMock.stub(:call) # to avoid RSpec integration
       expect { ResolveDependency.call(scope, :my_dependency) }.
         to raise_error(ArgumentError,
           "Dependency 'my_dependency' was not found in ScopeStub")

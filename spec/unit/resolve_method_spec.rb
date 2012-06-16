@@ -1,4 +1,4 @@
-require "jeeves/import_method"
+require "jeeves/resolve_method"
 
 module JeevesTestApp
   module MethodTest
@@ -9,16 +9,16 @@ module JeevesTestApp
 end
 
 module Jeeves
-  describe ImportMethod do
+  describe ResolveMethod do
 
     it "returns an anonymous function which delegates to the method" do
-      delegator = ImportMethod.call(:my_method, JeevesTestApp::MethodTest)
+      delegator = ResolveMethod.call(JeevesTestApp::MethodTest, :my_method)
       result = delegator.call(:foo, :bar, :baz) { |s| s.upcase }
       result.should == "FOO-BAR-BAZ"
     end
 
     it "returns nil if the scope does not respond to the method" do
-      delegator = ImportMethod.call(:undefined_method, JeevesTestApp::MethodTest)
+      delegator = ResolveMethod.call(JeevesTestApp::MethodTest, :undefined_method)
       delegator.should be(nil)
     end
 

@@ -1,11 +1,11 @@
 module Jeeves
   class ResolveDependency
-    IMPORTERS = [ImportMethod, ImportCallable, ImportConstant, ImportMock]
+    RESOLVERS = [ResolveMethod, ResolveCallable, ResolveConstant, ResolveMock]
 
     def self.call(scope, name)
       delegator = nil
-      IMPORTERS.each do |importer|
-        break if delegator = importer.call(name, scope)
+      RESOLVERS.each do |resolver|
+        break if delegator = resolver.call(scope, name)
       end
       delegator or raise ArgumentError, "Dependency '#{name}' was not found in #{scope}"
     end

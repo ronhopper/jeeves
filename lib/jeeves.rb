@@ -1,9 +1,9 @@
 module Jeeves
   autoload :ResolveDependency, "jeeves/resolve_dependency"
-  autoload :ImportMethod,      "jeeves/import_method"
-  autoload :ImportCallable,    "jeeves/import_callable"
-  autoload :ImportConstant,    "jeeves/import_constant"
-  autoload :ImportMock,        "jeeves/import_mock"
+  autoload :ResolveMethod,     "jeeves/resolve_method"
+  autoload :ResolveCallable,   "jeeves/resolve_callable"
+  autoload :ResolveConstant,   "jeeves/resolve_constant"
+  autoload :ResolveMock,       "jeeves/resolve_mock"
 
   def import(*args)
     options = args.last.respond_to?(:fetch) ? args.pop : {}
