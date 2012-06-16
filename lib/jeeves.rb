@@ -8,7 +8,7 @@ module Jeeves
     options = args.last.respond_to?(:fetch) ? args.pop : {}
     scope = options.fetch(:from) do
       module_names = ancestors.first.to_s.split('::')[0..-2]
-      module_names.reduce(Object) { |m, c| m.const_get(c) }
+      module_names.inject(Object) { |m, c| m.const_get(c) }
     end
     FindDependencies.call(scope, *args).each do |name, delegator|
       define_method(name) do |*args, &block|
