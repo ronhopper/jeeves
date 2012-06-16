@@ -1,7 +1,7 @@
 module Jeeves
   class ImportMock
     def self.call(name, scope)
-      if defined?(RSpec)
+      if defined?(RSpec) || defined?(Test::Unit)
         lambda do |*args, &block|
           if Jeeves.respond_to?(name)
             Jeeves.public_send(name, *args, &block)
