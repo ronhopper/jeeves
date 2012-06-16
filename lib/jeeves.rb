@@ -6,20 +6,25 @@ module Jeeves
   autoload :ResolveMock,       "jeeves/resolve_mock"
 
   def import(*args)
-    options = args.last.respond_to?(:fetch) ? args.pop : {}
+    options = args.last.is_a?(Hash) ? args.pop : {}
     scope = options.fetch(:from) do
       module_names = ancestors.first.to_s.split('::')[0..-2]
       module_names.inject(Object) { |m, c| m.const_get(c) }
     end
     args.each do |name|
+      if name.is_a?(Array)
+        external_name, internal_name = *name
+      else
+        external_name = internal_name = name
+      end
       if options[:lazy]
-        define_method(name) do |*args, &block|
-          delegator = ResolveDependency.call(scope, name)
+        define_method(internal_name) do |*args, &block|
+          delegator = ResolveDependency.call(scope, external_name)
           delegator.call(*args, &block)
         end
       else
-        delegator = ResolveDependency.call(scope, name)
-        define_method(name) do |*args, &block|
+        delegator = ResolveDependency.call(scope, external_name)
+        define_method(internal_name) do |*args, &block|
           delegator.call(*args, &block)
         end
       end

@@ -31,6 +31,7 @@ module JeevesTestApp
       import :my_method, :my_callable, :my_constant, from: OtherScope
       import :marco, :static_callable
       import :lazy_method, lazy: true
+      import [:marco, :say_polo]
     end
   end
 end
@@ -69,6 +70,10 @@ describe "import" do
   it "resolves non-lazy dependencies at import time" do
     JeevesTestApp::InnerScope.stub(:marco) { :not_polo }
     subject.marco.should == :polo
+  end
+
+  it "imports under an alias" do
+    subject.say_polo.should == :polo
   end
 
   it "raises an error if no importers can find the dependency" do
