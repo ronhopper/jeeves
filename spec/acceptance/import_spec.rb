@@ -24,6 +24,7 @@ module JeevesTestApp
       extend Jeeves
       import :my_method, :my_callable, :my_constant, from: OtherScope
       import :marco
+      import :lazy_method, lazy: true
     end
   end
 end
@@ -46,6 +47,16 @@ describe "import" do
   end
 
   it "defaults to the current class's scope" do
+    subject.marco.should == :polo
+  end
+
+  it "resolves lazy dependencies at call time" do
+    JeevesTestApp::InnerScope.stub(:lazy_method) { :snooze }
+    subject.lazy_method.should == :snooze
+  end
+
+  it "resolves non-lazy dependencies at import time" do
+    JeevesTestApp::InnerScope.stub(:marco) { :not_polo }
     subject.marco.should == :polo
   end
 

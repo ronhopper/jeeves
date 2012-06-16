@@ -1,16 +1,8 @@
 module Jeeves
-  class FindDependencies
-    def self.call(scope, *names)
-      names.inject({}) do |dependencies, name|
-        dependencies.update(name => delegator_for(name, scope))
-      end
-    end
-
-  private
-
+  class ResolveDependency
     IMPORTERS = [ImportMethod, ImportCallable, ImportConstant]
 
-    def self.delegator_for(name, scope)
+    def self.call(scope, name)
       delegator = nil
       IMPORTERS.each do |importer|
         break if delegator = importer.call(name, scope)

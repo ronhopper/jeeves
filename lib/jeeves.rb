@@ -1,8 +1,8 @@
 module Jeeves
-  autoload :FindDependencies, "jeeves/find_dependencies"
-  autoload :ImportMethod,     "jeeves/import_method"
-  autoload :ImportCallable,   "jeeves/import_callable"
-  autoload :ImportConstant,   "jeeves/import_constant"
+  autoload :ResolveDependency, "jeeves/resolve_dependency"
+  autoload :ImportMethod,      "jeeves/import_method"
+  autoload :ImportCallable,    "jeeves/import_callable"
+  autoload :ImportConstant,    "jeeves/import_constant"
 
   def import(*args)
     options = args.last.respond_to?(:fetch) ? args.pop : {}
@@ -10,9 +10,17 @@ module Jeeves
       module_names = ancestors.first.to_s.split('::')[0..-2]
       module_names.inject(Object) { |m, c| m.const_get(c) }
     end
-    FindDependencies.call(scope, *args).each do |name, delegator|
-      define_method(name) do |*args, &block|
-        delegator.call(*args, &block)
+    args.each do |name|
+      if options[:lazy]
+        define_method(name) do |*args, &block|
+          delegator = ResolveDependency.call(scope, name)
+          delegator.call(*args, &block)
+        end
+      else
+        delegator = ResolveDependency.call(scope, name)
+        define_method(name) do |*args, &block|
+          delegator.call(*args, &block)
+        end
       end
     end
   end
