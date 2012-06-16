@@ -160,7 +160,7 @@ require 'my_app/widget'
 describe MyApp::Widget do
   it "does something with my external class" do
     Jeeves.stub(my_external_class: stub(foo: "bar"))
-    subject.do_something
+    subject.do_something.should == :bar
   end
 end
 ```
