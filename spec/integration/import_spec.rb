@@ -20,10 +20,16 @@ module JeevesTestApp
       :polo
     end
 
+    class StaticCallable
+      def self.call(*args, &block)
+        block.call(args.map(&:to_s).join("*"))
+      end
+    end
+
     class TestSubject
       extend Jeeves
       import :my_method, :my_callable, :my_constant, from: OtherScope
-      import :marco
+      import :marco, :static_callable
       import :lazy_method, lazy: true
     end
   end
@@ -35,6 +41,11 @@ describe "import" do
   it "imports a method" do
     result = subject.my_method(:foo, :bar, :baz) { |s| s.upcase }
     result.should == "FOO-BAR-BAZ"
+  end
+
+  it "imports a static callable" do
+    result = subject.static_callable(:foo, :bar, :baz) { |s| s.capitalize }
+    result.should == "Foo*bar*baz"
   end
 
   it "imports a callable" do

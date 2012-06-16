@@ -2,6 +2,12 @@ require "jeeves/resolve_callable"
 
 module JeevesTestApp
   module CallableTest
+    class StaticCallable
+      def self.call(*args, &block)
+        block.call(args.map(&:to_s).join("*"))
+      end
+    end
+
     class MyCallable
       def call(*args, &block)
         block.call(args.map(&:to_s).join("-"))
@@ -12,6 +18,12 @@ end
 
 module Jeeves
   describe ResolveCallable do
+
+    it "returns an anonymous function which delegates to the static call method of the callable" do
+      delegator = ResolveCallable.call(JeevesTestApp::CallableTest, :static_callable)
+      result = delegator.call(:foo, :bar, :baz) { |s| s.capitalize }
+      result.should == "Foo*bar*baz"
+    end
 
     it "returns an anonymous function which delegates to a new instance of the callable" do
       delegator = ResolveCallable.call(JeevesTestApp::CallableTest, :my_callable)

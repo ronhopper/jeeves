@@ -3,7 +3,8 @@ module Jeeves
     def self.call(scope, name)
       class_name = camelize(name)
       if scope.const_defined?(class_name)
-        scope.const_get(class_name).new
+        callable = scope.const_get(class_name)
+        callable.respond_to?(:call) ? callable : callable.new
       end
     end
 
