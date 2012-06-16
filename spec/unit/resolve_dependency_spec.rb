@@ -2,6 +2,7 @@ module Jeeves
   class ImportMethod; end
   class ImportCallable; end
   class ImportConstant; end
+  class ImportMock; end
 end
 require "jeeves/resolve_dependency"
 
@@ -31,7 +32,13 @@ module Jeeves
       ResolveDependency.call(scope, :my_dependency).should be(delegator)
     end
 
+    it "uses ImportMock as a last resort" do
+      ImportMock.stub(:call).with(:my_dependency, scope) { delegator }
+      ResolveDependency.call(scope, :my_dependency).should be(delegator)
+    end
+
     it "raises an error if all importers fail" do
+      Jeeves::ImportMock.stub(:call) # to avoid RSpec integration
       expect { ResolveDependency.call(scope, :my_dependency) }.
         to raise_error(ArgumentError,
           "Dependency 'my_dependency' was not found in ScopeStub")

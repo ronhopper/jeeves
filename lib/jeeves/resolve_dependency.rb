@@ -1,6 +1,6 @@
 module Jeeves
   class ResolveDependency
-    IMPORTERS = [ImportMethod, ImportCallable, ImportConstant]
+    IMPORTERS = [ImportMethod, ImportCallable, ImportConstant, ImportMock]
 
     def self.call(scope, name)
       delegator = nil

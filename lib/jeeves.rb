@@ -3,6 +3,7 @@ module Jeeves
   autoload :ImportMethod,      "jeeves/import_method"
   autoload :ImportCallable,    "jeeves/import_callable"
   autoload :ImportConstant,    "jeeves/import_constant"
+  autoload :ImportMock,        "jeeves/import_mock"
 
   def import(*args)
     options = args.last.respond_to?(:fetch) ? args.pop : {}
