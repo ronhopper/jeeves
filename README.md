@@ -21,15 +21,149 @@ The goal of Jeeves is to:
 
 ### Explicit Declaration
 
-Coming soon.
+Flexible code design is intimately connected with keeping dependencies under
+control. In Ruby it is easy for implicit dependencies to get out of hand.
+Jeeves uses explicit dependency declarations via Python-like import statements:
+```ruby
+import :my_dependency
+```
+
+The import declaration creates an instance method which delegates to the
+external dependency. The dependency may be a static method, a class with a
+`call` method or a constant.
+
+With Jeeves, it is easy to program in a more functional style using classes
+that define a single behavior. For example:
+```ruby
+module MyApp
+  class InvoiceCustomers
+    extend Jeeves
+
+    import :customers, from: Repository
+    import :generate_invoice, :email_invoice
+
+    def call
+      customers.each do |customer|
+        invoice = generate_invoice(customer)
+        email_invoice(invoice)
+      end
+    end
+
+  end
+end
+```
 
 ### Resolution via Naming Convention
 
-Coming soon.
+Instead of relying on a gnarly XML file to tie dependencies together, Jeeves
+resolves an imported dependency by looking in a few places until it finds it.
+
+First, it looks for a static method of the same name:
+```ruby
+module MyApp
+  class Config
+    def self.redis
+      @redis ||= Redis.new(host: "localhost", port: 6379)
+    end
+  end
+
+  class DoSomething
+    extend Jeeves
+
+    import :redis, from: Config
+
+    def call
+      redis.get("mykey")
+    end
+  end
+end
+```
+
+Next, it looks for a class with the same name (CamelCased) and a `call` method:
+```ruby
+module MyApp
+  class CalculateSomething
+    def call(value)
+      value**2 - value + 1.2
+    end
+  end
+
+  class DoSomething
+    extend Jeeves
+
+    import :calculate_something
+
+    def call(value)
+      calculate_something(value)
+    end
+  end
+end
+```
+
+Finally, it looks for a constant with the same name (UPCASED):
+```ruby
+module MyApp
+  class CalculateArea
+    extend Jeeves
+
+    import :pi, from: Math
+
+    def call(radius)
+      pi * radius**2
+    end
+  end
+end
+```
 
 ### Simplified Mocking
 
-Coming soon.
+During isolated unit testing, external constants and direct class
+references cause annoyance because they must be redeclared.
+
+For example, consider the RSpec unit test:
+```ruby
+require 'my_app/widget'
+
+describe MyApp::Widget do
+  it "does something with my external class" do
+    MyApp::MyExternalClass.should_receive(:foo) { :bar }
+    subject.do_something
+  end
+end
+```
+
+In order for this code to work, you have to either require `my_external_class`
+or redefine it like so:
+```ruby
+require 'my_app/widget'
+
+module MyApp
+  class MyExternalClass
+  end
+end
+
+describe MyApp::Widget do
+  it "does something with my external class" do
+    MyApp::MyExternalClass.stub(foo: "bar")
+    subject.do_something.should == :bar
+  end
+end
+```
+
+Jeeves simplifies this by dynamically delegating all unresolvable dependencies
+to the `Jeeves` module when used inside of RSpec or Test::Unit. With Jeeves,
+the same unit test looks like so:
+
+```ruby
+require 'my_app/widget'
+
+describe MyApp::Widget do
+  it "does something with my external class" do
+    Jeeves.stub(my_external_class: stub(foo: "bar"))
+    subject.do_something
+  end
+end
+```
 
 Usage
 -----
