@@ -225,7 +225,7 @@ If you're feeling reckless, you can monkey-patch Jeeves into your project with
 History
 -------
 
-### Edge
+### Version 0.2.1
 * Import dependencies as class methods (rather than just instance methods)
 * Raise Jeeves::UnresolvedDependency when a dependency is not found
 * Mocked dependencies override real dependencies
