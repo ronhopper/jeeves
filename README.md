@@ -191,7 +191,7 @@ This will resolve the dependency during class definition, by looking for:
   * a class method `MyApp::MyDependency.call`
   * an instance method `MyApp::MyDependency.new.call`
   * a constant `MyApp::MY_DEPENDENCY`
-  * otherwise, it raises an unresolved dependency error
+  * otherwise, it raises an `Jeeves::UnresolvedDependency` error
 
 Multiple dependencies can be imported at once:
 ```ruby
@@ -224,6 +224,7 @@ History
 
 ### Edge
 * Import dependencies as class methods (rather than just instance methods)
+* Raise Jeeves::UnresolvedDependency when a dependency is not found
 * Mocked dependencies override real dependencies
 
 ### Version 0.2.0
