@@ -7,6 +7,7 @@ dependencies between loosely coupled classes via explicit declaraion.
 It is _not_ a traditional dependency injection framework, although it can
 easily fill that role.
 
+
 Motivation
 ----------
 
@@ -165,6 +166,7 @@ describe MyApp::Widget do
 end
 ```
 
+
 Usage
 -----
 
@@ -219,6 +221,7 @@ import :my_dependency, lazy: true
 If you're feeling reckless, you can monkey-patch Jeeves into your project with
 `Class.send(:include, Jeeves)` instead of writing `extend Jeeves` everywhere.
 
+
 History
 -------
 
@@ -240,6 +243,7 @@ History
 
 ### Version 0.0.1
 * Import a method, callable or constant from a specified scope
+
 
 License
 -------
