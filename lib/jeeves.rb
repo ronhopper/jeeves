@@ -3,7 +3,6 @@ module Jeeves
   autoload :ResolveMethod,     "jeeves/resolve_method"
   autoload :ResolveCallable,   "jeeves/resolve_callable"
   autoload :ResolveConstant,   "jeeves/resolve_constant"
-  autoload :ResolveMock,       "jeeves/resolve_mock"
 
   def import(*args)
     options = args.last.is_a?(Hash) ? args.pop : {}

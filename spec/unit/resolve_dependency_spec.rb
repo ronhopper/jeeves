@@ -2,7 +2,6 @@ module Jeeves
   class ResolveMethod; end
   class ResolveCallable; end
   class ResolveConstant; end
-  class ResolveMock; end
 end
 require "jeeves/resolve_dependency"
 
@@ -12,6 +11,7 @@ module Jeeves
     let(:delegator) { stub("delegator") }
 
     before do
+      Jeeves::ResolveDependency.stub(:in_test_framework?) { false } # to avoid RSpec integration
       ResolveMethod.stub(:call)
       ResolveCallable.stub(:call)
       ResolveConstant.stub(:call)
@@ -32,15 +32,9 @@ module Jeeves
       ResolveDependency.call(scope, :my_dependency).should be(delegator)
     end
 
-    it "uses ResolveMock as a last resort" do
-      ResolveMock.stub(:call).with(scope, :my_dependency) { delegator }
-      ResolveDependency.call(scope, :my_dependency).should be(delegator)
-    end
-
     it "raises an error if all importers fail" do
-      Jeeves::ResolveMock.stub(:call) # to avoid RSpec integration
       expect { ResolveDependency.call(scope, :my_dependency) }.
-        to raise_error(ArgumentError,
+        to raise_error(Jeeves::UnresolvedDependency,
           "Dependency 'my_dependency' was not found in ScopeStub")
     end
   end

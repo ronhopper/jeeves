@@ -77,9 +77,9 @@ describe "import" do
   end
 
   it "raises an error if no importers can find the dependency" do
-    Jeeves::ResolveMock.stub(:call) # to avoid RSpec integration
+    Jeeves::ResolveDependency.stub(:in_test_framework?) { false } # to avoid RSpec integration
     expect { subject.class.import :unknown, from: JeevesTestApp::OtherScope }.
-      to raise_error(ArgumentError,
+      to raise_error(Jeeves::UnresolvedDependency,
            "Dependency 'unknown' was not found in JeevesTestApp::OtherScope")
   end
 end
