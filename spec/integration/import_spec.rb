@@ -76,6 +76,11 @@ describe "import" do
     subject.say_polo.should == :polo
   end
 
+  it "also imports into as a class method" do
+    result = subject.class.my_method(:foo, :bar, :baz) { |s| s.upcase }
+    result.should == "FOO-BAR-BAZ"
+  end
+
   it "raises an error if no importers can find the dependency" do
     Jeeves::ResolveDependency.stub(:in_test_framework?) { false } # to avoid RSpec integration
     expect { subject.class.import :unknown, from: JeevesTestApp::OtherScope }.

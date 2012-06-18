@@ -17,15 +17,18 @@ module Jeeves
         external_name = internal_name = name
       end
       if options[:lazy]
-        define_method(internal_name) do |*args, &block|
+        self.class.send(:define_method, internal_name) do |*args, &block|
           delegator = ResolveDependency.call(scope, external_name)
           delegator.call(*args, &block)
         end
       else
         delegator = ResolveDependency.call(scope, external_name)
-        define_method(internal_name) do |*args, &block|
+        self.class.send(:define_method, internal_name) do |*args, &block|
           delegator.call(*args, &block)
         end
+      end
+      define_method(internal_name) do |*args, &block|
+        self.class.send(internal_name, *args, &block)
       end
     end
   end
