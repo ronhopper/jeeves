@@ -216,6 +216,30 @@ method is called, rather than once during class definition:
 import :my_dependency, lazy: true
 ```
 
+If you're feeling reckless, you can monkey-patch Jeeves into your project with
+`Class.send(:include, Jeeves)` instead of writing `extend Jeeves` everywhere.
+
+History
+-------
+
+### Edge
+* Import dependencies as class methods (rather than just instance methods)
+* Mocked dependencies override real dependencies
+
+### Version 0.2.0
+* Import dependency as an alias
+* Import callable classes (rather than just callable instances)
+* Mockable dependencies within RSpec or Test::Unit
+* Lazy dependency resolution
+
+### Version 0.1.0
+* Import defaults to current class's scope
+* Import multiple dependencies in one call
+* Raise ArgumentError when a dependency is not found
+
+### Version 0.0.1
+* Import a method, callable or constant from a specified scope
+
 License
 -------
 
