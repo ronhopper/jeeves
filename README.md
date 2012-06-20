@@ -225,7 +225,7 @@ If you're feeling reckless, you can monkey-patch Jeeves into your project with
 History
 -------
 
-### Edge
+### Version 0.2.2
 * Default to smart dependency resolution - resolve once on first call
 * Mock undefined dependency scope within RSpec or Test::Unit
 
