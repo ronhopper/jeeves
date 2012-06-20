@@ -10,7 +10,6 @@ end
 
 module Jeeves
   describe ResolveMethod do
-
     it "returns an anonymous function which delegates to the method" do
       delegator = ResolveMethod.call(JeevesTestApp::MethodTest, :my_method)
       result = delegator.call(:foo, :bar, :baz) { |s| s.upcase }
@@ -21,7 +20,6 @@ module Jeeves
       delegator = ResolveMethod.call(JeevesTestApp::MethodTest, :undefined_method)
       delegator.should be(nil)
     end
-
   end
 end
 

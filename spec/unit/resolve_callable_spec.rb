@@ -18,7 +18,6 @@ end
 
 module Jeeves
   describe ResolveCallable do
-
     it "returns an anonymous function which delegates to the static call method of the callable" do
       delegator = ResolveCallable.call(JeevesTestApp::CallableTest, :static_callable)
       result = delegator.call(:foo, :bar, :baz) { |s| s.capitalize }
@@ -35,7 +34,6 @@ module Jeeves
       delegator = ResolveCallable.call(JeevesTestApp::CallableTest, :undefined_callable)
       delegator.should be(nil)
     end
-
   end
 end
 

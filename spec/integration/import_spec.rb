@@ -29,9 +29,14 @@ module JeevesTestApp
     class TestSubject
       extend Jeeves
       import :my_method, :my_callable, :my_constant, from: OtherScope
-      import :marco, :static_callable
+      import :marco, :static_callable, lazy: false
       import :lazy_method, lazy: true
+      import :smart_resolver
       import [:marco, :say_polo]
+    end
+
+    def self.smart_resolver
+      :acts_smart
     end
   end
 end
@@ -63,13 +68,21 @@ describe "import" do
   end
 
   it "resolves lazy dependencies at call time" do
-    JeevesTestApp::InnerScope.stub(:lazy_method) { :snooze }
-    subject.lazy_method.should == :snooze
+    JeevesTestApp::InnerScope.stub(:lazy_method) { :snooze1 }
+    subject.lazy_method.should == :snooze1
+    JeevesTestApp::InnerScope.stub(:lazy_method) { :snooze2 }
+    subject.lazy_method.should == :snooze2
   end
 
   it "resolves non-lazy dependencies at import time" do
     JeevesTestApp::InnerScope.stub(:marco) { :not_polo }
     subject.marco.should == :polo
+  end
+
+  it "defaults to resolving dependencies once at first call" do
+    subject.smart_resolver
+    JeevesTestApp::InnerScope.stub(:smart_resolver) { :snooze }
+    subject.smart_resolver.should == :acts_smart
   end
 
   it "imports under an alias" do
@@ -83,16 +96,19 @@ describe "import" do
 
   it "raises an error if no importers can find the dependency" do
     Jeeves.stub(:in_test_framework?) { false } # to avoid RSpec integration
-    expect { subject.class.import :unknown, from: JeevesTestApp::OtherScope }.
-      to raise_error(Jeeves::UnresolvedDependency,
-           "Dependency 'unknown' was not found in JeevesTestApp::OtherScope")
+    expect do
+      class JeevesTestApp::InnerScope::TestSubject
+        import :unknown, from: JeevesTestApp::OtherScope, lazy: false
+      end
+    end.to raise_error(Jeeves::UnresolvedDependency,
+                       "Dependency 'unknown' was not found in JeevesTestApp::OtherScope")
   end
 
   it "raises an error if the scope is undefined" do
     Jeeves.stub(:in_test_framework?) { false } # to avoid RSpec integration
     expect do
       class JeevesTestApp::InnerScope::TestSubject
-        import :unknown, from: MyUndefined::Scope
+        import :unknown, from: MyUndefined::Scope, lazy: false
       end
     end.to raise_error(NameError)
   end

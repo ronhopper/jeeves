@@ -8,7 +8,6 @@ end
 
 module Jeeves
   describe ResolveConstant do
-
     it "returns an anonymous function which returns the constant" do
       delegator = ResolveConstant.call(JeevesTestApp::ConstantTest, :my_constant)
       delegator.call.should == "MY VALUE"
@@ -18,7 +17,6 @@ module Jeeves
       delegator = ResolveConstant.call(JeevesTestApp::ConstantTest, :undefined_constant)
       delegator.should be(nil)
     end
-
   end
 end
 

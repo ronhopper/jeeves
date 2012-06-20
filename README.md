@@ -226,6 +226,7 @@ History
 -------
 
 ### Edge
+* Default to smart dependency resolution - resolve once on first call
 * Mock undefined dependency scope within RSpec or Test::Unit
 
 ### Version 0.2.1
