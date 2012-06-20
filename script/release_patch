@@ -1,0 +1,29 @@
+#!/bin/sh
+set -e
+
+BRANCH=`git branch | grep '*' | cut -d ' ' -f 2`
+test "$BRANCH" != 'master' && (echo Must be on branch 'master'; exit 1)
+
+STATUS=`git status | grep -v ^#`
+test "$STATUS" != 'nothing to commit (working directory clean)' && (echo Working directory must be clean; exit 1)
+
+bundle exec rspec || (echo Must pass all tests; exit 1)
+
+VERSION_FILE=lib/jeeves/version.rb
+CURRENT_MAJOR_VERSION=`grep -o 'MAJOR_VERSION = [0-9]\+' $VERSION_FILE  | cut -d ' ' -f 3`
+CURRENT_MINOR_VERSION=`grep -o 'MINOR_VERSION = [0-9]\+' $VERSION_FILE  | cut -d ' ' -f 3`
+CURRENT_PATCH_VERSION=`grep -o 'PATCH_VERSION = [0-9]\+' $VERSION_FILE  | cut -d ' ' -f 3`
+NEXT_PATCH_VERSION=`expr $CURRENT_PATCH_VERSION + 1`
+sed -i"" "s/PATCH_VERSION = $CURRENT_PATCH_VERSION/PATCH_VERSION = $NEXT_PATCH_VERSION/g" $VERSION_FILE
+
+NEW_VERSION="$CURRENT_MAJOR_VERSION.$CURRENT_MINOR_VERSION.$NEXT_PATCH_VERSION"
+git commit -a -m "bumped version to $NEW_VERSION"
+git tag -a "v$NEW_VERSION" -m "Version $NEW_VERSION"
+git push origin master
+git push origin master --tags
+
+GEM="jeeves-$NEW_VERSION.gem"
+gem build jeeves.gemspec
+gem push "$GEM"
+mv "$GEM" dist/
+
