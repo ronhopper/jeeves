@@ -127,8 +127,8 @@ require 'my_app/widget'
 
 describe MyApp::Widget do
   it "does something with my external class" do
-    MyApp::MyExternalClass.should_receive(:foo) { :bar }
-    subject.do_something
+    MyApp::MyExternalClass.stub(foo: "bar")
+    subject.do_something.should == "bar"
   end
 end
 ```
@@ -146,7 +146,7 @@ end
 describe MyApp::Widget do
   it "does something with my external class" do
     MyApp::MyExternalClass.stub(foo: "bar")
-    subject.do_something.should == :bar
+    subject.do_something.should == "bar"
   end
 end
 ```
@@ -161,7 +161,7 @@ require 'my_app/widget'
 describe MyApp::Widget do
   it "does something with my external class" do
     Jeeves.stub(my_external_class: stub(foo: "bar"))
-    subject.do_something.should == :bar
+    subject.do_something.should == "bar"
   end
 end
 ```
