@@ -11,7 +11,7 @@ module Jeeves
     let(:delegator) { stub("delegator") }
 
     before do
-      Jeeves::ResolveDependency.stub(:in_test_framework?) { false } # to avoid RSpec integration
+      Jeeves.stub(:in_test_framework?) { false } # to avoid RSpec integration
       ResolveMethod.stub(:call)
       ResolveCallable.stub(:call)
       ResolveConstant.stub(:call)

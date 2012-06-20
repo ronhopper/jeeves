@@ -32,5 +32,25 @@ module Jeeves
       end
     end
   end
+
+  def const_missing(name)
+    return super unless Jeeves.in_test_framework?
+    Module.new do
+      @name = [name]
+      class << self
+        def const_missing(name)
+          @name << name
+          self
+        end
+        def to_s
+          @name.join("::")
+        end
+      end
+    end
+  end
+
+  def self.in_test_framework?
+    defined?(RSpec) || defined?(Test::Unit)
+  end
 end
 

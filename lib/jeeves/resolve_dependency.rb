@@ -10,15 +10,11 @@ module Jeeves
       RESOLVERS.each do |resolver|
         break if delegator = resolver.call(scope, name)
       end
-      delegator = mock(delegator, scope, name) if in_test_framework?
+      delegator = mock(delegator, scope, name) if Jeeves.in_test_framework?
       delegator or unresolved(scope, name)
     end
 
   private
-
-    def self.in_test_framework?
-      defined?(RSpec) || defined?(Test::Unit)
-    end
 
     def self.mock(delegator, scope, name)
       lambda do |*args, &block|

@@ -225,6 +225,9 @@ If you're feeling reckless, you can monkey-patch Jeeves into your project with
 History
 -------
 
+### Edge
+* Mock undefined dependency scope within RSpec or Test::Unit
+
 ### Version 0.2.1
 * Import dependencies as class methods (rather than just instance methods)
 * Raise Jeeves::UnresolvedDependency when a dependency is not found

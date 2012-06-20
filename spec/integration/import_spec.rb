@@ -82,10 +82,19 @@ describe "import" do
   end
 
   it "raises an error if no importers can find the dependency" do
-    Jeeves::ResolveDependency.stub(:in_test_framework?) { false } # to avoid RSpec integration
+    Jeeves.stub(:in_test_framework?) { false } # to avoid RSpec integration
     expect { subject.class.import :unknown, from: JeevesTestApp::OtherScope }.
       to raise_error(Jeeves::UnresolvedDependency,
            "Dependency 'unknown' was not found in JeevesTestApp::OtherScope")
+  end
+
+  it "raises an error if the scope is undefined" do
+    Jeeves.stub(:in_test_framework?) { false } # to avoid RSpec integration
+    expect do
+      class JeevesTestApp::InnerScope::TestSubject
+        import :unknown, from: MyUndefined::Scope
+      end
+    end.to raise_error(NameError)
   end
 end
 
