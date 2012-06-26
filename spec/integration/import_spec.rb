@@ -26,6 +26,10 @@ module JeevesTestApp
       end
     end
 
+    class AClass
+      A_CONSTANT = 4326
+    end
+
     class TestSubject
       extend Jeeves
       import :my_method, :my_callable, :my_constant, from: OtherScope
@@ -33,6 +37,7 @@ module JeevesTestApp
       import :lazy_method, lazy: true
       import :smart_resolver
       import [:marco, :say_polo]
+      import :a_constant, from: AClass, lazy: true
     end
 
     def self.smart_resolver
@@ -92,6 +97,11 @@ describe "import" do
   it "also imports into as a class method" do
     result = subject.class.my_method(:foo, :bar, :baz) { |s| s.upcase }
     result.should == "FOO-BAR-BAZ"
+  end
+
+  it "defines imported methods in the singleton class" do
+    subject.a_constant.should == 4326
+    # this results in a stack overflow if the methods are defined on Class
   end
 
   it "raises an error if no importers can find the dependency" do
